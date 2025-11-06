@@ -1,0 +1,52 @@
+HELP.md
+
+### Maven build artifacts ###
+target/
+*.jar
+*.war
+*.ear
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### Maven Wrapper ###
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+
+### STS (Spring Tool Suite) ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### OS-specific files ###
+.DS_Store
+Thumbs.db
+
+### Logs ###
+*.log
+
+### Docker-related ###
+# 로컬 빌드용 이미지나 임시 파일 무시
+docker-compose.override.yml

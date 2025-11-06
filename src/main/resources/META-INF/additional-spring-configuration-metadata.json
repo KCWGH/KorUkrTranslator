@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "gemini.api-key",
+    "type": "java.lang.String",
+    "description": "A description for 'gemini.api-key'"
+  },
+  {
+    "name": "gemini.endpoint",
+    "type": "java.lang.String",
+    "description": "A description for 'gemini.endpoint'"
+  },
+  {
+    "name": "google.translate.api-key",
+    "type": "java.lang.String",
+    "description": "A description for 'google.translate.api-key'"
+  },
+  {
+    "name": "google.translate.endpoint",
+    "type": "java.lang.String",
+    "description": "A description for 'google.translate.endpoint'"
+  }
+]}
