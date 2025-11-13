@@ -66,13 +66,6 @@ function initializeApp() {
             const memoryUsagePercent = memory.usedJSHeapSize / memory.jsHeapSizeLimit;
             
             if (memoryUsagePercent > 0.8) {
-                console.warn('메모리 사용량이 높습니다:', {
-                    used: Math.round(memory.usedJSHeapSize / 1024 / 1024) + 'MB',
-                    total: Math.round(memory.totalJSHeapSize / 1024 / 1024) + 'MB',
-                    limit: Math.round(memory.jsHeapSizeLimit / 1024 / 1024) + 'MB',
-                    usage: Math.round(memoryUsagePercent * 100) + '%'
-                });
-                
                 // 메모리 사용량이 높을 때 채팅 메시지 정리
                 limitChatMessages();
                 
@@ -84,24 +77,6 @@ function initializeApp() {
         }, 30000); // 30초마다 체크
     }
 
-    // 사파리 디버깅 정보 표시
-    if (isSafari) {
-        console.log('Safari-specific debugging enabled');
-        console.log('Available speech recognition languages:', navigator.languages);
-        
-        // 사파리에서 지원하는 언어 확인
-        if (SpeechRecognition) {
-            const testRecognition = new SpeechRecognition();
-            console.log('SpeechRecognition properties:', {
-                lang: testRecognition.lang,
-                continuous: testRecognition.continuous,
-                interimResults: testRecognition.interimResults,
-                maxAlternatives: testRecognition.maxAlternatives
-            });
-        }
-    }
-
     // Initialize UI
     updateUI();
 }
-

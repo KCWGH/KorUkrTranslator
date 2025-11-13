@@ -33,7 +33,6 @@ function stopTranslationLoading() {
 
 // Translation Processing
 async function processTranslation(text, direction, messageEl, originalTextEl, translationEl) {
-    console.log('processTranslation called:', { text, direction, isSafari });
     const t = getTranslationFunction();
     
     stopSpeaking();
@@ -52,7 +51,6 @@ async function processTranslation(text, direction, messageEl, originalTextEl, tr
     };
 
     const url = API_URL;
-    console.log('Sending translation request:', requestData);
 
     try {
         const response = await fetch(url, {
@@ -62,8 +60,6 @@ async function processTranslation(text, direction, messageEl, originalTextEl, tr
             },
             body: JSON.stringify(requestData)
         });
-        
-        console.log('Translation response received:', { status: response.status, ok: response.ok });
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -301,7 +297,7 @@ function addEditListeners(originalTextEl, initialText, direction, messageEl, tra
                 return;
             }
         }
-	});
+    });
 }
 
 // Message Management
@@ -406,10 +402,8 @@ function limitChatMessages() {
         const messagesToRemove = messages.length - MAX_CHAT_MESSAGES;
         for (let i = 0; i < messagesToRemove; i++) {
             const messageEl = messages[i];
-            // WeakMap에서 참조 제거
             appState.elementRefs.delete(messageEl);
             cleanupElement(messageEl);
         }
     }
 }
-

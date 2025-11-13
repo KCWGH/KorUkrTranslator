@@ -4,26 +4,49 @@ import java.time.Duration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import io.netty.channel.ChannelOption;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import lombok.RequiredArgsConstructor;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebClientConfig {
 
-    @Bean
-    WebClient webClient() {
-		HttpClient httpClient = HttpClient.create()
-				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000) // 10초 연결 타임아웃
-				.responseTimeout(Duration.ofSeconds(30)) // 30초 응답 타임아웃
-				.doOnConnected(conn -> 
-					conn.addHandlerLast(new io.netty.handler.timeout.ReadTimeoutHandler(30)) // 30초 읽기 타임아웃
-				);
+    private final TranslatorProperties properties;
 
-		return WebClient.builder()
-				.clientConnector(new org.springframework.http.client.reactive.ReactorClientHttpConnector(httpClient))
-				.codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(1024 * 1024)) // 1MB 메모리 제한
-				.build();
-	}
+    @Bean
+    HttpClient sharedHttpClient() {
+        return HttpClient.create()
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
+                .responseTimeout(Duration.ofSeconds(30))
+                .doOnConnected(conn ->
+                    conn.addHandlerLast(new ReadTimeoutHandler(30))
+                );
+    }
+
+    private WebClient.Builder createCommonWebClientBuilder(HttpClient sharedHttpClient) {
+        return WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(sharedHttpClient))
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(1024 * 1024));
+    }
+
+    @Bean("geminiWebClient")
+    WebClient geminiWebClient(HttpClient sharedHttpClient) {
+        return createCommonWebClientBuilder(sharedHttpClient)
+                .baseUrl(properties.gemini().endpoint())
+                .defaultHeader("X-API-Key", properties.gemini().apiKey())
+                .build();
+    }
+
+    @Bean("googleTranslateWebClient")
+    WebClient googleTranslateWebClient(HttpClient sharedHttpClient) {
+        return createCommonWebClientBuilder(sharedHttpClient)
+                .baseUrl(properties.googleTranslate().endpoint())
+                .defaultHeader("X-goog-api-key", properties.googleTranslate().apiKey())
+                .build();
+    }
 }
