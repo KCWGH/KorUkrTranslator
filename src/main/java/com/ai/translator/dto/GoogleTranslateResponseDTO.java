@@ -1,16 +1,23 @@
 package com.ai.translator.dto;
 
-import lombok.Data;
 import java.util.List;
+import java.util.Optional;
+
+import lombok.Data;
 
 @Data
 public class GoogleTranslateResponseDTO {
-    // Rename 'Data' to 'TranslationData' or something similar
-    private TranslationData data; // Changed from private Data data;
+    private TranslationData data;
+    
+    public Optional<String> getTranslatedText() {
+        return Optional.ofNullable(this.data)
+                .flatMap(d -> Optional.ofNullable(d.translations))
+                .flatMap(list -> list.stream().findFirst())
+                .map(Translation::getTranslatedText);
+    }
 
     @Data
-    // Rename the nested class
-    public static class TranslationData { // Changed from public static class Data {
+    public static class TranslationData {
         private List<Translation> translations;
     }
 

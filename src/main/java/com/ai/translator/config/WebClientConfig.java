@@ -38,7 +38,7 @@ public class WebClientConfig {
     WebClient geminiWebClient(HttpClient sharedHttpClient) {
         return createCommonWebClientBuilder(sharedHttpClient)
                 .baseUrl(properties.gemini().endpoint())
-                .defaultHeader("X-API-Key", properties.gemini().apiKey())
+                .defaultHeader("x-goog-api-key", properties.gemini().apiKey())
                 .build();
     }
 
