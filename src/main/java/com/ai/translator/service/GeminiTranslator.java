@@ -11,9 +11,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import com.ai.translator.config.TranslatorProperties;
 import com.ai.translator.dto.GeminiRequestDTO;
 import com.ai.translator.dto.GeminiResponseDTO;
-import com.ai.translator.service.TranslationService.TranslationDirection;
+import com.ai.translator.model.TranslationDirection;
+import com.ai.translator.model.TranslationMode;
 import com.ai.translator.service.TranslationService.TranslationException;
-import com.ai.translator.service.TranslationService.TranslationMode;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -25,8 +25,6 @@ public class GeminiTranslator implements Translator {
     @Qualifier("geminiWebClient")
     private final WebClient geminiWebClient;
 
-    private final GeminiPromptGenerator promptGenerator;
-
     private final TranslatorProperties properties;
 
     @Override
@@ -36,7 +34,7 @@ public class GeminiTranslator implements Translator {
 
     @Override
     public Mono<String> translate(String sourceText, TranslationDirection direction) {
-        String prompt = promptGenerator.generatePrompt(sourceText, direction);
+        String prompt = generatePrompt(sourceText, direction);
 
         GeminiRequestDTO.Part part = new GeminiRequestDTO.Part(prompt);
         GeminiRequestDTO.Content content = new GeminiRequestDTO.Content(Collections.singletonList(part));
@@ -57,5 +55,21 @@ public class GeminiTranslator implements Translator {
     private String extractTranslatedText(GeminiResponseDTO response) {
         return response.getTranslatedText()
                 .orElseThrow(() -> new TranslationException("Gemini 응답에서 번역된 텍스트를 찾을 수 없습니다."));
+    }
+
+    private String generatePrompt(String text, TranslationDirection direction) {
+        if (direction == TranslationDirection.KO_UK) {
+            return "Translate the following Korean sentence into Ukrainian.\n\n" +
+                    "Assume that the speaker is male and the listener is female. " +
+                    "Reflect gender-specific forms in the translation if applicable.\n" +
+                    "Only provide the translated sentence without any explanation.\n\n" +
+                    "Korean text to translate:\n" + text;
+        } else if (direction == TranslationDirection.UK_KO) {
+            return "Translate the following Ukrainian sentence into Korean.\n\n" +
+                    "Only provide the translated sentence without any explanation.\n\n" +
+                    "Ukrainian text to translate:\n" + text;
+        }
+
+        throw new UnsupportedOperationException("Unsupported translation direction for Gemini: " + direction);
     }
 }

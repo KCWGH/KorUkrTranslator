@@ -9,9 +9,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import com.ai.translator.config.TranslatorProperties;
 import com.ai.translator.dto.GoogleTranslateRequestDTO;
 import com.ai.translator.dto.GoogleTranslateResponseDTO;
-import com.ai.translator.service.TranslationService.TranslationDirection;
+import com.ai.translator.model.TranslationDirection;
+import com.ai.translator.model.TranslationMode;
 import com.ai.translator.service.TranslationService.TranslationException;
-import com.ai.translator.service.TranslationService.TranslationMode;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;

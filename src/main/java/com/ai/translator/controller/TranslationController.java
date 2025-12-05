@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ai.translator.model.TranslationDirection;
+import com.ai.translator.model.TranslationMode;
 import com.ai.translator.service.TranslationService;
-import com.ai.translator.service.TranslationService.TranslationDirection;
-import com.ai.translator.service.TranslationService.TranslationMode;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

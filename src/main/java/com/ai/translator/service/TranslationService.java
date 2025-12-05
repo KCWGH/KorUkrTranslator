@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.ai.translator.model.TranslationDirection;
+import com.ai.translator.model.TranslationMode;
+
 import reactor.core.publisher.Mono;
 
 @Service
@@ -53,31 +56,6 @@ public class TranslationService {
             return Mono.error(new TranslationException("번역 결과가 너무 깁니다. 최대 " + MAX_OUTPUT_LENGTH + "자를 초과했습니다."));
         }
         return Mono.just(result);
-    }
-
-    public enum TranslationMode {
-        ACCURATE, FAST
-    }
-
-    public enum TranslationDirection {
-        KO_UK("ko", "uk"),
-        UK_KO("uk", "ko");
-
-        private final String sourceLang;
-        private final String targetLang;
-
-        TranslationDirection(String sourceLang, String targetLang) {
-            this.sourceLang = sourceLang;
-            this.targetLang = targetLang;
-        }
-
-        public String getSourceLang() {
-            return sourceLang;
-        }
-
-        public String getTargetLang() {
-            return targetLang;
-        }
     }
 
     public static class TranslationException extends RuntimeException {
