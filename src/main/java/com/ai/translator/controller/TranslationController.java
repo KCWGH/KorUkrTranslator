@@ -22,13 +22,11 @@ public class TranslationController {
 
     @PostMapping
     public Mono<String> translateText(@RequestBody TranslationRequest request) {
-        // 텍스트 전처리: null 체크, 공백 제거, 빈 텍스트 검증
         String text = request.getText() == null ? "" : request.getText().trim();
         if (text.isBlank()) {
             return Mono.just("");
         }
-        
-        // 정규화된 텍스트로 요청 객체 업데이트
+
         request.setText(text);
 
         TranslationMode mode;
@@ -40,7 +38,6 @@ public class TranslationController {
 
         TranslationDirection direction;
         try {
-            // "ko-uk" → "KO_UK" 형태로 변환
             direction = TranslationDirection.valueOf(request.getDirection().toUpperCase().replace("-", "_"));
         } catch (IllegalArgumentException e) {
             return Mono.error(new RuntimeException("지원하지 않는 번역 방향: " + request.getDirection()));

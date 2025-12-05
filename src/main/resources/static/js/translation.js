@@ -1,4 +1,3 @@
-// Translation Loading Functions
 function startTranslationLoading(translationEl) {
     stopTranslationLoading();
     const t = getTranslationFunction();
@@ -9,11 +8,10 @@ function startTranslationLoading(translationEl) {
     translationEl.textContent = baseText + '...';
     translationEl.classList.add('is-loading');
 
-    // 기존 인터벌 정리 후 새로 설정
     if (appState.loading.interval) {
         clearInterval(appState.loading.interval);
     }
-    
+
     appState.loading.interval = setInterval(() => {
         dotCount = (dotCount % 3) + 1;
         const dots = '.'.repeat(dotCount);
@@ -31,17 +29,15 @@ function stopTranslationLoading() {
     });
 }
 
-// Translation Processing
 async function processTranslation(text, direction, messageEl, originalTextEl, translationEl) {
     const t = getTranslationFunction();
-    
+
     stopSpeaking();
     startTranslationLoading(translationEl);
 
     const oldSpeakerButton = messageEl.querySelector('.speaker-button');
     if (oldSpeakerButton) oldSpeakerButton.remove();
 
-    // 줄바꿈을 공백으로 변환하여 번역 API에 전달
     const normalizedText = normalizeTextForTranslation(text);
 
     const requestData = {
@@ -94,7 +90,6 @@ async function processTranslation(text, direction, messageEl, originalTextEl, tr
     }
 }
 
-// Copy Listener
 function addCopyListener(translationEl) {
     const t = getTranslationFunction();
     translationEl.addEventListener('click', async (e) => {
@@ -123,7 +118,6 @@ function addCopyListener(translationEl) {
     });
 }
 
-// Edit Listeners
 function addEditListeners(originalTextEl, initialText, direction, messageEl, translationEl) {
     const t = getTranslationFunction();
 
@@ -137,10 +131,10 @@ function addEditListeners(originalTextEl, initialText, direction, messageEl, tra
 
         clearButton.addEventListener('mousedown', (e) => {
             e.preventDefault();
-            
+
             const clearButton = e.target;
             removeAllChildren(targetEl, 'clear-text-button');
-            
+
             targetEl.focus();
             removeClearButton(targetEl);
         });
@@ -166,7 +160,7 @@ function addEditListeners(originalTextEl, initialText, direction, messageEl, tra
 
     originalTextEl.addEventListener('focus', (e) => {
         if (e.target.getAttribute('contenteditable') === 'true') {
-        const textOnly = getTextContent(e.target);
+            const textOnly = getTextContent(e.target);
             if (textOnly.length > 0) {
                 createClearButton(e.target).style.display = 'flex';
             }
@@ -214,10 +208,8 @@ function addEditListeners(originalTextEl, initialText, direction, messageEl, tra
     originalTextEl.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             if (e.shiftKey) {
-                // Shift + Enter: 줄바꿈 허용 (기본 동작 유지)
                 return;
             } else {
-                // Enter만: 번역 실행
                 e.preventDefault();
                 e.target.blur();
                 return;
@@ -264,14 +256,14 @@ function addEditListeners(originalTextEl, initialText, direction, messageEl, tra
 
             if (clearButton && selection.containsNode(clearButton, true)) {
                 e.preventDefault();
-                
+
                 const clearButton = e.target.querySelector('.clear-text-button');
                 Array.from(e.target.childNodes).forEach(node => {
                     if (node !== clearButton) {
                         node.remove();
                     }
                 });
-                
+
                 e.target.focus();
                 removeClearButton(e.target);
                 return;
@@ -300,7 +292,6 @@ function addEditListeners(originalTextEl, initialText, direction, messageEl, tra
     });
 }
 
-// Message Management
 function addMessage(text, direction, translatedText, isError = false, isExample = false) {
     const t = getTranslationFunction();
     const messageEl = document.createElement('div');
@@ -352,16 +343,6 @@ function addMessage(text, direction, translatedText, isError = false, isExample 
     messageEl.appendChild(originalTextEl);
     chatContainer.appendChild(messageEl);
 
-    // DOM 요소 참조를 WeakMap에 저장하여 메모리 누수 방지
-    appState.elementRefs.set(messageEl, {
-        originalTextEl,
-        translationEl,
-        translationWrapper,
-        direction,
-        isExample
-    });
-
-    // 메시지 수 제한 적용
     limitChatMessages();
 
     chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -395,14 +376,12 @@ function createLiveMessage(direction) {
     return { messageEl, originalTextEl, translationEl };
 }
 
-// Chat Message Limits
 function limitChatMessages() {
     const messages = chatContainer.querySelectorAll('.message');
     if (messages.length > MAX_CHAT_MESSAGES) {
         const messagesToRemove = messages.length - MAX_CHAT_MESSAGES;
         for (let i = 0; i < messagesToRemove; i++) {
             const messageEl = messages[i];
-            appState.elementRefs.delete(messageEl);
             cleanupElement(messageEl);
         }
     }

@@ -26,7 +26,7 @@ public class GeminiTranslator implements Translator {
     private final WebClient geminiWebClient;
 
     private final GeminiPromptGenerator promptGenerator;
-    
+
     private final TranslatorProperties properties;
 
     @Override
@@ -43,18 +43,19 @@ public class GeminiTranslator implements Translator {
         GeminiRequestDTO requestDTO = new GeminiRequestDTO(Collections.singletonList(content));
 
         return geminiWebClient.post()
-            .uri(properties.gemini().endpoint())
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(requestDTO)
-            .retrieve()
-            .bodyToMono(GeminiResponseDTO.class)
-            .map(this::extractTranslatedText)
-            .onErrorMap(WebClientResponseException.class,
-                e -> new TranslationException("Gemini 번역 실패: HTTP " + e.getStatusCode() + " - " + e.getResponseBodyAsString(), e));
+                .uri(properties.gemini().endpoint())
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(requestDTO)
+                .retrieve()
+                .bodyToMono(GeminiResponseDTO.class)
+                .map(this::extractTranslatedText)
+                .onErrorMap(WebClientResponseException.class,
+                        e -> new TranslationException(
+                                "Gemini 번역 실패: HTTP " + e.getStatusCode() + " - " + e.getResponseBodyAsString(), e));
     }
 
     private String extractTranslatedText(GeminiResponseDTO response) {
         return response.getTranslatedText()
-            .orElseThrow(() -> new TranslationException("Gemini 응답에서 번역된 텍스트를 찾을 수 없습니다."));
+                .orElseThrow(() -> new TranslationException("Gemini 응답에서 번역된 텍스트를 찾을 수 없습니다."));
     }
 }

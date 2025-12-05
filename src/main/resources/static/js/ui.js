@@ -1,4 +1,3 @@
-// UI Management Functions
 function toggleDropdown(targetDropdown, targetButton) {
     const isShow = targetDropdown.classList.toggle('show');
     targetButton.setAttribute('aria-expanded', isShow);
@@ -127,4 +126,3 @@ function updateUI() {
 
     updateButtonTitles();
 }
-

@@ -1,4 +1,3 @@
-// Text-to-Speech Functions
 function resetSpeakerButtonState() {
     const t = getTranslationFunction();
     if (appState.tts.speakingButton) {
@@ -9,8 +8,7 @@ function resetSpeakerButtonState() {
         appState.tts.speakingButton.classList.remove('stop');
         appState.tts.speakingButton.classList.add('play');
         appState.tts.speakingButton = null;
-        
-        // SpeechSynthesisUtterance 리소스 정리
+
         if (appState.tts.utterance) {
             appState.tts.utterance.onend = null;
             appState.tts.utterance.onerror = null;
@@ -93,4 +91,3 @@ function addSpeakerButton(translationWrapper, textToSpeak, direction, isDisabled
     translationWrapper.appendChild(speakerButton);
     return speakerButton;
 }
-

@@ -22,7 +22,7 @@ public class GoogleTranslator implements Translator {
 
     @Qualifier("googleTranslateWebClient")
     private final WebClient googleTranslateWebClient;
-    
+
     private final TranslatorProperties properties;
 
     @Override
@@ -33,25 +33,25 @@ public class GoogleTranslator implements Translator {
     @Override
     public Mono<String> translate(String sourceText, TranslationDirection direction) {
         GoogleTranslateRequestDTO requestDTO = new GoogleTranslateRequestDTO(
-            sourceText,
-            direction.getSourceLang(),
-            direction.getTargetLang(),
-            "text"
-        );
+                sourceText,
+                direction.getSourceLang(),
+                direction.getTargetLang(),
+                "text");
 
         return googleTranslateWebClient.post()
-            .uri(properties.googleTranslate().endpoint())
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(requestDTO)
-            .retrieve()
-            .bodyToMono(GoogleTranslateResponseDTO.class)
-            .map(this::extractTranslatedText)
-            .onErrorMap(WebClientResponseException.class,
-                e -> new TranslationException("Google Translate 번역 실패: HTTP " + e.getStatusCode() + " - " + e.getResponseBodyAsString(), e));
+                .uri(properties.googleTranslate().endpoint())
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(requestDTO)
+                .retrieve()
+                .bodyToMono(GoogleTranslateResponseDTO.class)
+                .map(this::extractTranslatedText)
+                .onErrorMap(WebClientResponseException.class,
+                        e -> new TranslationException("Google Translate 번역 실패: HTTP " + e.getStatusCode() + " - "
+                                + e.getResponseBodyAsString(), e));
     }
 
     private String extractTranslatedText(GoogleTranslateResponseDTO response) {
         return response.getTranslatedText()
-            .orElseThrow(() -> new TranslationException("Google Translate 응답에서 번역된 텍스트를 찾을 수 없습니다."));
+                .orElseThrow(() -> new TranslationException("Google Translate 응답에서 번역된 텍스트를 찾을 수 없습니다."));
     }
 }

@@ -59,7 +59,6 @@ const i18n = {
     }
 };
 
-// Translation function - will be set after appState is initialized
 let translationFunction = null;
 
 function setTranslationFunction(fn) {
@@ -68,9 +67,7 @@ function setTranslationFunction(fn) {
 
 function getTranslationFunction() {
     if (!translationFunction) {
-        // Fallback: create translation function if not set
         translationFunction = (key) => i18n[appState.currentLang][key] || key;
     }
     return translationFunction;
 }
-

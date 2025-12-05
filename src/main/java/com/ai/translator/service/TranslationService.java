@@ -16,10 +16,9 @@ public class TranslationService {
     private static final int MAX_INPUT_LENGTH = 10000;
     private static final int MAX_OUTPUT_LENGTH = 20000;
 
-    // Translator 인터페이스의 모든 구현체(GeminiTranslator, GoogleTranslator)를 주입받아 Map으로 구성
     public TranslationService(List<Translator> translatorList) {
         this.translators = translatorList.stream()
-            .collect(Collectors.toMap(Translator::getMode, Function.identity()));
+                .collect(Collectors.toMap(Translator::getMode, Function.identity()));
     }
 
     public Mono<String> translate(String sourceText, TranslationMode mode, TranslationDirection direction) {
@@ -35,7 +34,7 @@ public class TranslationService {
         }
 
         return translator.translate(processedText, direction)
-            .flatMap(this::validateTranslationResult);
+                .flatMap(this::validateTranslationResult);
     }
 
     private String preprocessText(String text) {
@@ -43,10 +42,10 @@ public class TranslationService {
             return "";
         }
         return text
-            .trim()
-            .replaceAll("\\r\\n|\\r", "\\n")
-            .replaceAll("\\n+", "\\n")
-            .replaceAll("[ \\t]+", " ");
+                .trim()
+                .replaceAll("\\r\\n|\\r", "\\n")
+                .replaceAll("\\n+", "\\n")
+                .replaceAll("[ \\t]+", " ");
     }
 
     private Mono<String> validateTranslationResult(String result) {
@@ -72,13 +71,24 @@ public class TranslationService {
             this.targetLang = targetLang;
         }
 
-        public String getSourceLang() { return sourceLang; }
-        public String getTargetLang() { return targetLang; }
+        public String getSourceLang() {
+            return sourceLang;
+        }
+
+        public String getTargetLang() {
+            return targetLang;
+        }
     }
 
     public static class TranslationException extends RuntimeException {
         private static final long serialVersionUID = 1L;
-        public TranslationException(String message) { super(message); }
-        public TranslationException(String message, Throwable cause) { super(message, cause); }
+
+        public TranslationException(String message) {
+            super(message);
+        }
+
+        public TranslationException(String message, Throwable cause) {
+            super(message, cause);
+        }
     }
 }
