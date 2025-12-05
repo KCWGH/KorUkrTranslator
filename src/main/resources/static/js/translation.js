@@ -35,6 +35,9 @@ async function processTranslation(text, direction, messageEl, originalTextEl, tr
     stopSpeaking();
     startTranslationLoading(translationEl);
 
+    const requestId = Date.now().toString();
+    translationEl.dataset.requestId = requestId;
+
     const oldSpeakerButton = messageEl.querySelector('.speaker-button');
     if (oldSpeakerButton) oldSpeakerButton.remove();
 
@@ -57,6 +60,10 @@ async function processTranslation(text, direction, messageEl, originalTextEl, tr
             body: JSON.stringify(requestData)
         });
 
+        if (translationEl.dataset.requestId !== requestId) {
+            return;
+        }
+
         if (!response.ok) {
             const errorText = await response.text();
             let errorMessage = errorText.trim() || `${t('error_http')}: ${response.status} ${response.statusText}`;
@@ -73,6 +80,10 @@ async function processTranslation(text, direction, messageEl, originalTextEl, tr
         translationEl.parentElement.style.display = 'flex';
 
     } catch (error) {
+        if (translationEl.dataset.requestId !== requestId) {
+            return;
+        }
+
         stopTranslationLoading();
         let displayMessage = error.message;
 

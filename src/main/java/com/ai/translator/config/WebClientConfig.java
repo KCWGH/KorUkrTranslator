@@ -16,22 +16,25 @@ import reactor.netty.http.client.HttpClient;
 @RequiredArgsConstructor
 public class WebClientConfig {
 
+    private static final int CONNECT_TIMEOUT_MILLIS = 10000;
+    private static final int RESPONSE_TIMEOUT_SECONDS = 30;
+    private static final int READ_TIMEOUT_SECONDS = 30;
+    private static final int MAX_IN_MEMORY_SIZE = 1024 * 1024;
+
     private final TranslatorProperties properties;
 
     @Bean
     HttpClient sharedHttpClient() {
         return HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
-                .responseTimeout(Duration.ofSeconds(30))
-                .doOnConnected(conn ->
-                    conn.addHandlerLast(new ReadTimeoutHandler(30))
-                );
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, CONNECT_TIMEOUT_MILLIS)
+                .responseTimeout(Duration.ofSeconds(RESPONSE_TIMEOUT_SECONDS))
+                .doOnConnected(conn -> conn.addHandlerLast(new ReadTimeoutHandler(READ_TIMEOUT_SECONDS)));
     }
 
     private WebClient.Builder createCommonWebClientBuilder(HttpClient sharedHttpClient) {
         return WebClient.builder()
                 .clientConnector(new ReactorClientHttpConnector(sharedHttpClient))
-                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(1024 * 1024));
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(MAX_IN_MEMORY_SIZE));
     }
 
     @Bean("geminiWebClient")

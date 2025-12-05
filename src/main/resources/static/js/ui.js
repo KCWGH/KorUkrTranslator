@@ -69,7 +69,7 @@ function renderModeDropdown() {
 
         optionEl.addEventListener('click', () => {
             appState.currentMode = mode.code;
-            updateUI();
+            updateControls(); // Changed from updateUI to updateControls to preserve chat
             modeDropdown.classList.remove('show');
             modeMenuButton.setAttribute('aria-expanded', 'false');
         });
@@ -97,7 +97,7 @@ function renderLangDropdown() {
 
         optionEl.addEventListener('click', () => {
             appState.currentLang = lang.code;
-            updateUI();
+            initializeUI();
             langDropdown.classList.remove('show');
             langMenuButton.setAttribute('aria-expanded', 'false');
         });
@@ -106,7 +106,7 @@ function renderLangDropdown() {
     });
 }
 
-function updateUI() {
+function updateControls() {
     const t = getTranslationFunction();
     stopTranslationLoading();
     document.getElementById('doc-title').textContent = t('title');
@@ -119,10 +119,16 @@ function updateUI() {
 
     renderModeDropdown();
     renderLangDropdown();
+    updateButtonTitles();
+}
 
+function initializeUI() {
+    updateControls();
+
+    const t = getTranslationFunction();
     chatContainer.innerHTML = '';
     addMessage(t('chat_initial_ko'), 'ko-uk', t('chat_initial_uk'), false, true);
     addMessage(t('chat_example_uk'), 'uk-ko', t('chat_example_ko'), false, true);
-
-    updateButtonTitles();
 }
+
+const updateUI = initializeUI;
